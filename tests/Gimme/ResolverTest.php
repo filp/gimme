@@ -31,7 +31,7 @@ class ResolverTest extends TestCase
         $r->pushProvider($this->getServiceProviderCallable('yayProvider'));
 
         $bound = $r->bind(function($id, $services = array('yayProvider')) {
-            $this->assertTrue($services['yayProvider']);
+            $this->assertTrue($services->yayProvider);
             $this->assertEquals(10, $id);
         });
 
@@ -49,8 +49,8 @@ class ResolverTest extends TestCase
         $r->pushProvider($this->getServiceProviderCallable('yayProvider'));
 
         $bound = $r->bind(function($services = array('yayProvider', 'bananaProvider')) {
-            $this->assertTrue($services['yayProvider']);
-            $this->assertNull($services['bananaProvider']);
+            $this->assertTrue($services->yayProvider);
+            $this->assertNull($services->bananaProvider);
         });
 
         call_user_func($bound);
@@ -66,7 +66,7 @@ class ResolverTest extends TestCase
         $r->pushProvider($this->getServiceProviderCallable('yayProvider'));
 
         $bound = $r->bind(function($id, $services = array('yayProvider')) {
-            $this->assertTrue($services['yayProvider']);
+            $this->assertTrue($services->yayProvider);
             $this->assertEquals(10, $id);
 
             // Verify additional arguments passed to the callable:

@@ -125,7 +125,7 @@ class Resolver
 
                 // Append the services array in its correct position, between expected
                 // arguments and extra arguments:
-                $baseArgumentsSlice[] = $services;
+                $baseArgumentsSlice[] = (object) $services;
 
                 // And everything else after it:
                 $args = array_merge($baseArgumentsSlice, $extraArgumentsSlice);
