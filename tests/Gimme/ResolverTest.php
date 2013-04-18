@@ -7,29 +7,24 @@
 
 namespace Gimme;
 use Gimme\TestCase;
-use Gimme\Exception\UnknownDependencyException;
+use Gimme\Exception\UnknownServiceException;
 use InvalidArgumentException;
 
 class ResolverTest extends TestCase
 {
 
     /**
-     * @covers Gimme\Resolver::pushResolver
+     * @covers Gimme\Resolver::pushProvider
      * @covers Gimme\Resolver::alias
      * @covers Gimme\Resolver::resolve
      */
-    public function testResolverAlias()
+    public function testServiceAlias()
     {
         $r = $this->getResolver();
 
-        // mock resolver for fiddlesticks:
-        $depResolver = function($d) {
-            if($d == 'fiddlestick-service') {
-                return true;
-            }
-        };
+        $provider = $this->getServiceProviderCallable('fiddlestick-service');
 
-        $r->pushResolver($depResolver);
+        $r->pushProvider($provider);
         $r->alias('foo', 'fiddlestick-service');
 
         $this->assertTrue($r->resolve('foo'));
@@ -37,92 +32,82 @@ class ResolverTest extends TestCase
     }
 
     /**
-     * @covers Gimme\Resolver::pushResolver
+     * @covers Gimme\Resolver::pushProvider
      * @covers Gimme\Resolver::resolve
      */
-    public function testResolverSimple()
+    public function testResolveService()
     {
         $r = $this->getResolver();
 
-        // mock resolver for fiddlesticks:
-        $depResolver = function($d) {
-            if($d == 'fiddlestick-service') {
-                return true;
-            }
-        };
+        $provider = $this->getServiceProviderCallable('fiddlestick-service');
 
-        $r->pushResolver($depResolver);
+        $r->pushProvider($provider);
         $this->assertTrue($r->resolve('fiddlestick-service'));
     }
 
     /**
-     * @expectedException Gimme\Exception\UnknownDependencyException
-     * @covers Gimme\Resolver::pushResolver
+     * @expectedException Gimme\Exception\UnknownServiceException
+     * @covers Gimme\Resolver::pushProvider
      * @covers Gimme\Resolver::resolve
      */
-    public function testResolverThrowsOnUnknownDependency()
+    public function testResolverThrowsOnUnknownService()
     {
         $r = $this->getResolver();
 
-        // mock resolver for fiddlesticks:
-        $depResolver = function($d) {
-            if($d == 'fiddlestick-service') {
-                return true;
-            }
-        };
+        $provider = $this->getServiceProviderCallable('fiddlestick-service');
 
-        $r->pushResolver($depResolver);
+        $r->pushProvider($provider);
         $this->assertTrue($r->resolve('banana-service'));
     }
 
     /**
-     * @covers Gimme\Resolver::pushResolver
-     * @covers Gimme\Resolver::popResolver
+     * @covers Gimme\Resolver::pushProvider
+     * @covers Gimme\Resolver::popProvider
      */
-    public function testPushPopCallableResolver()
+    public function testPushPopProviderCallable()
     {
         $r = $this->getResolver();
 
-        $depResolver = function() { return 'fiddlesticks'; };
+        $provider = $this->getServiceProviderCallable('fiddlestick-service');
 
-        $r->pushResolver($depResolver);
-        $this->assertEquals($depResolver, $r->popResolver());
+        $r->pushProvider($provider);
+        $this->assertEquals($provider, $r->popProvider());
 
         // Nothing left to pop:
-        $this->assertNull($r->popResolver());
+        $this->assertNull($r->popProvider());
     }
 
     /**
-     * @covers Gimme\Resolver::pushResolver
-     * @covers Gimme\Resolver::popResolver
+     * @covers Gimme\Resolver::pushProvider
+     * @covers Gimme\Resolver::popProvider
      */
-    public function testPushPopInstanceResolver()
+    public function testPushPopProviderInstance()
     {
         $r = $this->getResolver();
-        $m = $this->getDependencyResolver();
+        $provider = $this->getServiceProvider();
 
-        $r->pushResolver($m);
-        $this->assertNotNull($r->popResolver());
-        $this->assertNull($r->popResolver());
+        $r->pushProvider($provider);
+        $this->assertEquals($provider, $r->popProvider());
+        $this->assertNull($r->popProvider());
     }
 
     /**
      * @expectedException InvalidArgumentException
-     * @covers Gimme\Resolver::pushResolver
+     * @covers Gimme\Resolver::pushProvider
      */
     public function testPushPopInvalidResolver()
     {
         $r = $this->getResolver();
-        $r->pushResolver('baloney');
+        $r->pushProvider('baloney');
     }
 
     /**
      * @expectedException InvalidArgumentException
-     * @covers Gimme\Resolver::pushResolver
+     * @covers Gimme\Resolver::pushProvider
      */
     public function testPushPopInvalidInstanceResolver()
     {
         $r = $this->getResolver();
-        $r->pushResolver(new \stdClass);
+        $r->pushProvider(new \stdClass);
     }
 }

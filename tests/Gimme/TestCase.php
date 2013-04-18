@@ -9,6 +9,9 @@ use Mockery as m;
 
 class TestCase extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @return Gimme\Resolver
+     */
     protected function getResolver()
     {
         return new Resolver;
@@ -16,11 +19,25 @@ class TestCase extends \PHPUnit_Framework_TestCase
 
     /**
      * Returns something that behaves like the
-     * Gimme\DependencyResolver\DependencyResolverInterface
-     * @return Gimme\DependencyResolver\DependencyResolverInterface
+     * Gimme\ServiceProvider\ServiceProviderInterface
+     * @return Gimme\ServiceProvider\ServiceProviderInterface
      */
-    protected function getDependencyResolver()
+    protected function getServiceProvider()
     {
-        return m::mock('Gimme\\DependencyResolver\DependencyResolverInterface');
+        return m::mock('Gimme\ServiceProvider\ServiceProviderInterface');
+    }
+
+    /**
+     * Returns a callable provider that knows about a single service.
+     * @return Gimme\ServiceProvider\ServiceProviderInterface
+     */
+    protected function getServiceProviderCallable($service)
+    {
+        $service = (string) $service;
+        return function($d) use($service) {
+            if($d == $service) {
+                return true;
+            }
+        };
     }
 }
