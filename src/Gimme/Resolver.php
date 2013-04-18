@@ -85,7 +85,7 @@ class Resolver
      * @param  string $serviceIdentifier
      * @throws Gimme\Exception\UnknownDependencyException if service not
      *             found and throwOnMissingService(true)
-     * @return mixed|false
+     * @return mixed|null
      */
     public function resolve($serviceIdentifier)
     {
@@ -107,7 +107,7 @@ class Resolver
             throw new UnknownServiceException(
                 "Unknown service identifier: $serviceIdentifier"
             );
-        } else { return false; }
+        } else { return null; }
     }
 
     /**

@@ -74,7 +74,7 @@ class ResolverTest extends TestCase
         $provider = $this->getServiceProviderCallable('fiddlestick-service');
 
         $r->pushProvider($provider);
-        $this->assertFalse($r->resolve('banana-service'));
+        $this->assertNull($r->resolve('banana-service'));
     }
 
     /**
