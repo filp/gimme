@@ -1,6 +1,7 @@
 {
     "name": "filp/gimme",
     "version": "0.1.0",
+    "license": "MIT",
     "authors": [
         { "name": "Filipe Dobreira",
           "homepage": "https://github.com/filp",
