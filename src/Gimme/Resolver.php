@@ -10,9 +10,9 @@ use Gimme\Exception\UnknownServiceException;
 use InvalidArgumentException;
 
 /**
- * Understands and resolves dependencies through proxy
- * resolvers and/or declared dependencies; also exposes
- * the methods to make calls with those dependencies.
+ * Understands and resolves services through registered
+ * providers. Also exposes methods to call other methods
+ * while *~ magically ~* injecting services.
  */
 class Resolver
 {
@@ -71,9 +71,9 @@ class Resolver
             $serviceIdentifier = $this->aliases[$serviceIdentifier];
         }
 
-        foreach($this->providers as $i => $resolver) {
-            $callable   = is_callable($resolver) ? $resolver : array($resolver, self::PROVIDER_METHOD);
-            $resolution = call_user_func($resolver, $serviceIdentifier);
+        foreach($this->providers as $i => $provider) {
+            $callable   = is_callable($provider) ? $provider : array($provider, self::PROVIDER_METHOD);
+            $resolution = call_user_func($provider, $serviceIdentifier);
 
             if($resolution !== null) {
                 return $resolution;
