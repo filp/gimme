@@ -25,7 +25,9 @@ $resolver->pushProvider(
     function($serviceName) { return $pimple[$serviceName]; };
 );
 
-// Use it:
+// Use it. Tell Gimme that this callable (which can be a closure, a function
+// or a method) wants to use a service called 'myService', which one of the
+// registered service providers will be able to fetch for you.
 $resolver->call(function($services = array('myService')) {
     var_dump($services->myService); #=> instance of Foo
 });
