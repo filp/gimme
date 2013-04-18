@@ -27,12 +27,13 @@ class ResolverTest extends TestCase
      */
     public function testBindSimple()
     {
+	$self = $this;
         $r = $this->getResolver();
         $r->pushProvider($this->getServiceProviderCallable('yayProvider'));
 
-        $bound = $r->bind(function($id, $services = array('yayProvider')) {
-            $this->assertTrue($services->yayProvider);
-            $this->assertEquals(10, $id);
+        $bound = $r->bind(function($id, $services = array('yayProvider')) use($self) {
+            $self->assertTrue($services->yayProvider);
+            $self->assertEquals(10, $id);
         });
 
         $id = 10;
@@ -45,12 +46,13 @@ class ResolverTest extends TestCase
      */
     public function testBindSimpleWithMissingService()
     {
+	$self = $this;
         $r = $this->getResolver();
         $r->pushProvider($this->getServiceProviderCallable('yayProvider'));
 
-        $bound = $r->bind(function($services = array('yayProvider', 'bananaProvider')) {
-            $this->assertTrue($services->yayProvider);
-            $this->assertNull($services->bananaProvider);
+        $bound = $r->bind(function($services = array('yayProvider', 'bananaProvider')) use($self) {
+            $self->assertTrue($services->yayProvider);
+            $self->assertNull($services->bananaProvider);
         });
 
         call_user_func($bound);
@@ -62,18 +64,19 @@ class ResolverTest extends TestCase
      */
     public function testBindSimpleWithAdditionalArguments()
     {
+	$self = $this;
         $r = $this->getResolver();
         $r->pushProvider($this->getServiceProviderCallable('yayProvider'));
 
-        $bound = $r->bind(function($id, $services = array('yayProvider')) {
-            $this->assertTrue($services->yayProvider);
-            $this->assertEquals(10, $id);
+        $bound = $r->bind(function($id, $services = array('yayProvider')) use($self) {
+            $self->assertTrue($services->yayProvider);
+            $self->assertEquals(10, $id);
 
             // Verify additional arguments passed to the callable:
             $args = func_get_args();
-            $this->assertEquals($args[2], 22);
-            $this->assertEquals($args[3], "bananas");
-            $this->assertEquals($args[4], "lionel ritchie");
+            $self->assertEquals($args[2], 22);
+            $self->assertEquals($args[3], "bananas");
+            $self->assertEquals($args[4], "lionel ritchie");
         });
 
         $id = 10;
