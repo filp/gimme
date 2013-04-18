@@ -50,8 +50,6 @@ $resolver->call(function($services = array('myService')) {
 - Service providers may be a simple closure:
 
     ```php
-    <?php
-
     $resolver->pushProvider(function($serviceName) {
         if($serviceName == 'bananas') {
             return 'Here, have some bananas!';
@@ -62,8 +60,6 @@ $resolver->call(function($services = array('myService')) {
 - Support for callable-binding (bind your callable to the method injector, call it whenever).
 
     ```php
-    <?php
-
     $bound = $resolver->bind(function($services = array('someService')) {
         return $services->someService->doThings();
     });
@@ -75,8 +71,6 @@ $resolver->call(function($services = array('myService')) {
 - Support for service-name aliases:
 
     ```php
-    <?php
-
     $resolver->alias('bananaService', 'turnipService');
     $resolver->call(function($services = array('bananaService')) {
         print "I love {$services->bananaService->name()}!"; #=> I love turnip!
