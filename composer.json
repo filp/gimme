@@ -1,0 +1,17 @@
+{
+    "name": "filp/gimme",
+    "version": "0.1.0",
+    "authors": [
+        { "name": "Filipe Dobreira",
+          "homepage": "https://github.com/filp",
+           "role": "Developer" }
+    ],
+    "require": {
+        "php": ">=5.3"
+    },
+    "autoload": {
+        "psr-0": {
+            "Gimme": "src/"
+        }
+    }
+}
