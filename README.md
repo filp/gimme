@@ -1,4 +1,4 @@
-# gimme
+# gimme [![Build Status](https://travis-ci.org/filp/gimme.png?branch=master)](https://travis-ci.org/filp/gimme)
 
 Inject your services with *magic*.
 
