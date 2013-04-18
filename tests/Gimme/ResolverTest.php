@@ -27,20 +27,16 @@ class ResolverTest extends TestCase
      */
     public function testBindSimple()
     {
-        $self = $this;
-
         $r = $this->getResolver();
-        $r->pushProvider(function($service) {
-            if($service == 'test') {
-                return 'oh snap';
-            }
+        $r->pushProvider($this->getServiceProviderCallable('yayProvider'));
+
+        $bound = $r->bind(function($id, $services = array('yayProvider')) {
+            $this->assertTrue($services['yayProvider']);
+            $this->assertEquals(10, $id);
         });
 
-        $bound = $r->bind(function($test) use($self) {
-            $self->assertEquals('oh snap', $test);
-        });
-
-        call_user_func($bound);
+        $id = 10;
+        call_user_func($bound, $id);
     }
 
     /**
@@ -49,15 +45,12 @@ class ResolverTest extends TestCase
      */
     public function testBindSimpleWithMissingService()
     {
-        $self = $this;
-
         $r = $this->getResolver();
-        $provider = $this->getServiceProviderCallable('test');
-        $r->pushProvider($provider);
+        $r->pushProvider($this->getServiceProviderCallable('yayProvider'));
 
-        $bound = $r->bind(function($test, $nothing) use($self) {
-            $self->assertTrue($test);
-            $self->assertNull($nothing);
+        $bound = $r->bind(function($services = array('yayProvider', 'bananaProvider')) {
+            $this->assertTrue($services['yayProvider']);
+            $this->assertNull($services['bananaProvider']);
         });
 
         call_user_func($bound);
@@ -69,22 +62,22 @@ class ResolverTest extends TestCase
      */
     public function testBindSimpleWithAdditionalArguments()
     {
-        $self = $this;
-
         $r = $this->getResolver();
-        $provider = $this->getServiceProviderCallable('test');
-        $r->pushProvider($provider);
+        $r->pushProvider($this->getServiceProviderCallable('yayProvider'));
 
-        $bound = $r->bind(function($test, $nothing) use($self) {
-            $self->assertTrue($test);
-            $self->assertNull($nothing);
-            $self->assertEquals(3, func_num_args());
+        $bound = $r->bind(function($id, $services = array('yayProvider')) {
+            $this->assertTrue($services['yayProvider']);
+            $this->assertEquals(10, $id);
 
+            // Verify additional arguments passed to the callable:
             $args = func_get_args();
-            $self->assertEquals('Hello!', end($args));
+            $this->assertEquals($args[2], 22);
+            $this->assertEquals($args[3], "bananas");
+            $this->assertEquals($args[4], "lionel ritchie");
         });
 
-        call_user_func($bound, 'Hello!');
+        $id = 10;
+        call_user_func($bound, $id, 22, "bananas", "lionel ritchie");
     }
 
 

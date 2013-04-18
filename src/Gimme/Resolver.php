@@ -106,15 +106,35 @@ class Resolver
         // and use the parameter names to attempt to match known services.
         $parameters    = $reflection->getParameters();
         $resolver      = $this;
-        $boundCallable = function() use($parameters, $callable, $resolver) {
-            $injections = array();
-            foreach($parameters as $param) {
-                $injections[] = $resolver->resolve($param->name);
+        $boundCallable = function() use($parameters, $reflection, $callable, $resolver) {
+            $services  = array();
+            $args      = func_get_args();
+
+            // The LAST argument must be called 'services', and be an array:
+            $param = end($parameters);
+            if($param->name == 'services' && is_array($serviceList = $param->getDefaultValue())) {
+                foreach($serviceList as $service) {
+                    $services[$service] = $resolver->resolve($service);
+                }
+
+                // Insert the argument in the correct (???) order, while
+                // preserving additional arguments:
+                $expectsParameters  = $reflection->getNumberOfParameters();
+
+                $baseArgumentsSlice  = array_slice($args, 0, $expectsParameters - 1);
+                $extraArgumentsSlice = array_slice($args, count($baseArgumentsSlice));
+
+                // Append the services array in its correct position, between expected
+                // arguments and extra arguments:
+                $baseArgumentsSlice[] = $services;
+
+                // And everything else after it:
+                $args = array_merge($baseArgumentsSlice, $extraArgumentsSlice);
             }
 
             // Additional arguments passed to the outer/bound function
             // are appended to the end of the arguments list.
-            return call_user_func_array($callable, array_merge($injections, func_get_args()) );
+            return call_user_func_array($callable, $args);
         };
 
         return $boundCallable;
