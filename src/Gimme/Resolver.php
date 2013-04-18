@@ -62,9 +62,8 @@ class Resolver
     }
 
     /**
-     * Adds an arbitrary alias from one service identifier
-     * to another. If the alias is provided, it will be mapped
-     * before dispatching to proxy providers.
+     * Adds an arbitrary alias from one service identifier to another. If the alias is
+     * provided, it will be mapped before dispatching to proxy providers.
      * @param  string $alias
      * @param  string $concrete
      * @return $this
@@ -82,8 +81,8 @@ class Resolver
     }
 
     /**
-     * Given a callable, automagically figures out expected arguments,
-     * and returns a bound callable ready to be called with any other arguments.
+     * Given a callable, automagically figures out how to inject the services
+     * argument, and returns a bound callable that can be called whenever.
      * @param  callable $callable
      * @return callable
      */
