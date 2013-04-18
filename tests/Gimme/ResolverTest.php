@@ -12,6 +12,81 @@ use InvalidArgumentException;
 
 class ResolverTest extends TestCase
 {
+    /**
+     * @expectedException InvalidArgumentException
+     * @covers Gimme\Resolver::bind
+     */
+    public function testThrowsOnInvalidCallable()
+    {
+        $this->getResolver()->bind('where do seagulls go at night');
+    }
+
+    /**
+     * @covers Gimme\Resolver::bind
+     * @covers Gimme\Resolver::pushProvider
+     */
+    public function testBindSimple()
+    {
+        $self = $this;
+
+        $r = $this->getResolver();
+        $r->pushProvider(function($service) {
+            if($service == 'test') {
+                return 'oh snap';
+            }
+        });
+
+        $bound = $r->bind(function($test) use($self) {
+            $self->assertEquals('oh snap', $test);
+        });
+
+        call_user_func($bound);
+    }
+
+    /**
+     * @covers Gimme\Resolver::bind
+     * @covers Gimme\Resolver::pushProvider
+     */
+    public function testBindSimpleWithMissingService()
+    {
+        $self = $this;
+
+        $r = $this->getResolver();
+        $provider = $this->getServiceProviderCallable('test');
+        $r->pushProvider($provider);
+
+        $bound = $r->bind(function($test, $nothing) use($self) {
+            $self->assertTrue($test);
+            $self->assertNull($nothing);
+        });
+
+        call_user_func($bound);
+    }
+
+    /**
+     * @covers Gimme\Resolver::bind
+     * @covers Gimme\Resolver::pushProvider
+     */
+    public function testBindSimpleWithAdditionalArguments()
+    {
+        $self = $this;
+
+        $r = $this->getResolver();
+        $provider = $this->getServiceProviderCallable('test');
+        $r->pushProvider($provider);
+
+        $bound = $r->bind(function($test, $nothing) use($self) {
+            $self->assertTrue($test);
+            $self->assertNull($nothing);
+            $self->assertEquals(3, func_num_args());
+
+            $args = func_get_args();
+            $self->assertEquals('Hello!', end($args));
+        });
+
+        call_user_func($bound, 'Hello!');
+    }
+
 
     /**
      * @covers Gimme\Resolver::pushProvider

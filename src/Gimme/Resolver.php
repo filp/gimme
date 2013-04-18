@@ -8,6 +8,8 @@
 namespace Gimme;
 use Gimme\Exception\UnknownServiceException;
 use InvalidArgumentException;
+use ReflectionFunction;
+use ReflectionMethod;
 
 /**
  * Understands and resolves services through registered
@@ -77,6 +79,45 @@ class Resolver
 
         $this->aliases[$alias] = $concrete;
         return $this;
+    }
+
+    /**
+     * Given a callable, automagically figures out expected arguments,
+     * and returns a bound callable ready to be called with any other arguments.
+     * @param  callable $callable
+     * @return callable
+     */
+    public function bind($callable)
+    {
+        if(!is_callable($callable)) {
+            throw new InvalidArgumentException(
+                'Argument to ' . __METHOD__ . ' must be a callable'
+            );
+        }
+
+        // This is almost certainly wrong:
+        if(is_array($callable)) {
+            $reflection = new ReflectionMethod($callable[0], $callable[1]);
+        } else {
+            $reflection = new ReflectionFunction($callable);
+        }
+
+        // Iterate through each of the parameters expected by the callable,
+        // and use the parameter names to attempt to match known services.
+        $parameters    = $reflection->getParameters();
+        $resolver      = $this;
+        $boundCallable = function() use($parameters, $callable, $resolver) {
+            $injections = array();
+            foreach($parameters as $param) {
+                $injections[] = $resolver->resolve($param->name);
+            }
+
+            // Additional arguments passed to the outer/bound function
+            // are appended to the end of the arguments list.
+            return call_user_func_array($callable, array_merge($injections, func_get_args()) );
+        };
+
+        return $boundCallable;
     }
 
     /**
