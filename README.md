@@ -67,7 +67,7 @@ $resolver->call(function($services = array('myService')) {
     });
 
     // Give the bound method to your killer router of sorts:
-
+    $app->get('/foo', $bound);
     ```
 
 - Support for service-name aliases:
