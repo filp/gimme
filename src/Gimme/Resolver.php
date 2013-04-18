@@ -24,6 +24,13 @@ class Resolver
     const PROVIDER_METHOD = 'resolve';
 
     /**
+     * Should an exception be thrown if all options for
+     * resolving a service are exhausted?
+     * @var bool
+     */
+    private $throwOnMissingService = false;
+
+    /**
      * Registered provider proxies, that know how
      * to retrieve services by identifier.
      * @var array
@@ -37,6 +44,20 @@ class Resolver
      * @var array
      */
     protected $aliases = array();
+
+    /**
+     * @see Gimme\Resolver::throwOnMissingService
+     * @param  bool|null $throw
+     * @return bool
+     */
+    public function throwOnMissingService($throw = false)
+    {
+        if(func_num_args() != 0) {
+            $this->throwOnMissingService = (bool) $throw;
+        }
+
+        return $this->throwOnMissingService;
+    }
 
     /**
      * Adds an arbitrary alias from one service identifier
@@ -62,8 +83,9 @@ class Resolver
      * Resolves a service by name.
      * @todo   implement
      * @param  string $serviceIdentifier
-     * @throws Gimme\Exception\UnknownDependencyException if ...
-     * @return mixed
+     * @throws Gimme\Exception\UnknownDependencyException if service not
+     *             found and throwOnMissingService(true)
+     * @return mixed|false
      */
     public function resolve($serviceIdentifier)
     {
@@ -80,10 +102,12 @@ class Resolver
             }
         }
 
-        // Nothing was found
-        throw new UnknownServiceException(
-            "Unknown service identifier: $serviceIdentifier"
-        );
+        // Nothing was found if we got this far.
+        if($this->throwOnMissingService()) {
+            throw new UnknownServiceException(
+                "Unknown service identifier: $serviceIdentifier"
+            );
+        } else { return false; }
     }
 
     /**

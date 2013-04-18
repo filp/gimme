@@ -49,15 +49,32 @@ class ResolverTest extends TestCase
      * @expectedException Gimme\Exception\UnknownServiceException
      * @covers Gimme\Resolver::pushProvider
      * @covers Gimme\Resolver::resolve
+     * @covers Gimme\Resolver::throwOnMissingService
      */
     public function testResolverThrowsOnUnknownService()
+    {
+        $r = $this->getResolver();
+        $r->throwOnMissingService(true);
+
+        $provider = $this->getServiceProviderCallable('fiddlestick-service');
+
+        $r->pushProvider($provider);
+        $this->assertTrue($r->resolve('banana-service'));
+    }
+
+    /**
+     * @covers Gimme\Resolver::pushProvider
+     * @covers Gimme\Resolver::resolve
+     * @covers Gimme\Resolver::throwOnMissingService
+     */
+    public function testResolverDoesNotThrowOnMissingService()
     {
         $r = $this->getResolver();
 
         $provider = $this->getServiceProviderCallable('fiddlestick-service');
 
         $r->pushProvider($provider);
-        $this->assertTrue($r->resolve('banana-service'));
+        $this->assertFalse($r->resolve('banana-service'));
     }
 
     /**
