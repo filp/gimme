@@ -9,6 +9,9 @@
     "require": {
         "php": ">=5.3"
     },
+    "require-dev": {
+        "mockery/mockery": "dev-master@dev"
+    },
     "autoload": {
         "psr-0": {
             "Gimme": "src/"
