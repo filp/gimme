@@ -27,13 +27,9 @@ $resolver->pushProvider(
 
 // Use it:
 $resolver->call(function($services = array('myService')) {
-    var_dump($services->myService); #=> Foo
+    var_dump($services->myService); #=> instance of Foo
 });
 ```
-## Should I use this?
-
-*Dunno*. It was fun to work on, but I'm not going to be the one to tell you to use it. The code
-is solid, if there's a point in using it for your needs, it's a point for you to make.
 
 ## Features:
 
@@ -84,6 +80,11 @@ is solid, if there's a point in using it for your needs, it's a point for you to
         print "I love {$services->bananaService->name()}!"; #=> I love turnip!
     });
     ```
+
+## Should I use this?
+
+*Dunno*. It was fun to work on, but I'm not going to be the one to tell you to use it. The code
+is solid, if there's a point in using it for your needs, it's a point for you to make.
 
 ## Install it:
 
