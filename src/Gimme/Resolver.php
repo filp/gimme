@@ -6,6 +6,7 @@
  */
 
 namespace Gimme;
+use Gimme\Exception\UnknownDependencyException;
 use InvalidArgumentException;
 
 /**
@@ -36,6 +37,54 @@ class Resolver
      * @var array
      */
     protected $aliases = array();
+
+    /**
+     * Adds an arbitrary alias from one dependency identifier
+     * to another. If the alias is provided, it will be mapped
+     * before dispatching to proxy resolvers.
+     * @param  string $alias
+     * @param  string $concrete
+     * @return $this
+     */
+    public function alias($alias, $concrete)
+    {
+        if(!is_string($alias) || !is_string($concrete)) {
+            throw new InvalidArgumentException(
+                __METHOD__ . ' expects both arguments to be strings'
+            );
+        }
+
+        $this->aliases[$alias] = $concrete;
+        return $this;
+    }
+
+    /**
+     * "manually" resolves a dependency by name.
+     * @todo   implement
+     * @param  string $dependencyIdentifier
+     * @throws Gimme\Exception\UnknownDependencyException if ...
+     * @return mixed
+     */
+    public function resolve($dependencyIdentifier)
+    {
+        if(!empty($this->aliases[$dependencyIdentifier])) {
+            $dependencyIdentifier = $this->aliases[$dependencyIdentifier];
+        }
+
+        foreach($this->resolvers as $i => $resolver) {
+            $callable   = is_callable($resolver) ? $resolver : array($resolver, self::RESOLVER_METHOD);
+            $resolution = call_user_func($resolver, $dependencyIdentifier);
+
+            if($resolution !== null) {
+                return $resolution;
+            }
+        }
+
+        // Nothing was found
+        throw new UnknownDependencyException(
+            "Unknown dependency identifier: $dependencyIdentifier"
+        );
+    }
 
     /**
      * Registers a dependency resolver. Resolvers are

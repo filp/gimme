@@ -16,9 +16,9 @@ interface DependencyResolverInterface
 {
     /**
      * Resolves and returns a dependency by its identifier,
-     * or 'false' if such a dependency is not recognized.
+     * or 'null' if such a dependency is not recognized.
      * @param  string $dependencyIdentifier
-     * @return false|mixed
+     * @return null|mixed
      */
     public function resolve($dependencyIdentifier);
 }
