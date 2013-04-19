@@ -42,9 +42,9 @@ $resolver->call(function($services = array('myService')) {
 
     ```php
     // warning: example may not make much sense
-    $app->get('/user/{id}', function($id, $services = array('user') {
+    $app->get('/user/{id}', $resolver->bind(function($id, $services = array('user') {
         return $services->user->get($id);
-    });
+    }));
     ```
 
 - Service providers may be a simple closure:
