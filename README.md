@@ -2,8 +2,10 @@
 
 Inject your services with *magic*.
 
-A super-simple library to auto-magically inject named services from a `$services` argument. Services
+A super-simple library to auto-magically inject named services from a `$services`\* argument. Services
 come from service providers, that can be introduced to Gimme through a simple stack layout.
+
+\* Or not, have a look at `Gimme\Resolver::setArgumentName`
 
 ```php
 <?php

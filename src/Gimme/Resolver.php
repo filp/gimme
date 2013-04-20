@@ -48,7 +48,14 @@ class Resolver
     protected $aliases = array();
 
     /**
-     * @see Gimme\Resolver::throwOnMissingService
+     * The name of the argument from which to fetch
+     * arguments. 'services' by default.
+     * @var string
+     */
+    protected $argumentName = 'services';
+
+    /**
+     * @see    Gimme\Resolver::throwOnMissingService
      * @param  bool|null $throw
      * @return bool
      */
@@ -59,6 +66,24 @@ class Resolver
         }
 
         return $this->throwOnMissingService;
+    }
+
+    /**
+     * @see Gimme\Resolver::$argumentName
+     * @param string $argumentName
+     */
+    public function setArgumentName($argumentName)
+    {
+        $this->argumentName = $argumentName;
+    }
+
+    /**
+     * @see Gimme\Resolver::$argumentName
+     * @return string
+     */
+    public function getArgumentName()
+    {
+        return $this->argumentName;
     }
 
     /**
@@ -109,9 +134,9 @@ class Resolver
             $services  = array();
             $args      = func_get_args();
 
-            // The LAST argument must be called 'services', and be an array:
+            // The LAST argument must match the $argumentName, and be an array:
             $param = end($parameters);
-            if($param->name == 'services' && is_array($serviceList = $param->getDefaultValue())) {
+            if($param->name == $this->getArgumentName() && is_array($serviceList = $param->getDefaultValue())) {
                 foreach($serviceList as $service) {
                     $services[$service] = $resolver->resolve($service);
                 }
