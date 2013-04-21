@@ -136,7 +136,7 @@ class Resolver
 
             // The LAST argument must match the $argumentName, and be an array:
             $param = end($parameters);
-            if($param->name == $this->getArgumentName() && is_array($serviceList = $param->getDefaultValue())) {
+            if($param->name == $resolver->getArgumentName() && is_array($serviceList = $param->getDefaultValue())) {
                 foreach($serviceList as $service) {
                     $services[$service] = $resolver->resolve($service);
                 }
