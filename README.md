@@ -24,7 +24,7 @@ $pimple['myService'] = function() {
 // that knows how to talk to Pimple:
 $resolver = new Resolver;
 $resolver->pushProvider(
-    function($serviceName) { return $pimple[$serviceName]; };
+    function($serviceName) use($pimple) { return $pimple[$serviceName]; };
 );
 
 // Use it. Tell Gimme that this callable (which can be a closure, a function
